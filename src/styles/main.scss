@@ -1,0 +1,66 @@
+@import "bootstrap";
+
+.navbar-brand img {
+    max-height: 100%;
+    display: inline-block;
+    position: relative;
+    top: -3px;
+}
+
+.character-img {
+    opacity: 0.3;
+    &.active {
+        opacity: 1.0;
+    }
+    &.dead {
+        opacity: 1;
+        background-color: rgba(255,0,0,0.5);
+    }
+    &.winner {
+        opacity: 1;
+        background-color: rgba(255,255,0,0.5);
+    }
+}
+
+.players-row {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  .col-md-1 {
+    padding-left: 3px;
+    padding-right: 3px;
+    display: flex;
+    align-items: stretch;
+    .playercard {
+        flex: 1;
+        padding: 15px 10px;
+        word-break: break-word;
+        text-align: center;
+        margin: 10px 0px;
+        border-radius: 10px;
+        h3 {
+            margin: 0;
+        }
+        &.player0 {background-color: rgba(#f41d1b, 0.5);}
+        &.player1 {background-color: rgba(#4782fa, 0.5);}
+        &.player2 {background-color: rgba(#fec92d, 0.5);}
+        &.player3 {background-color: rgba(#2ad612, 0.5);}
+        &.player4 {background-color: rgba(#fa6219, 0.5);}
+        &.player5 {background-color: rgba(#2fe6d4, 0.5);}
+        &.player6 {background-color: rgba(#c726e6, 0.5);}
+        &.player7 {background-color: rgba(#4e5d7e, 0.5);}
+    }
+  }
+}
+
+.row-pjs {
+  .col-md-12 {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+}
+
+.navbar-right.btn-warning {
+    margin-right: 10px;
+}

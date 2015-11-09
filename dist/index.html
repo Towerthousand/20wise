@@ -1,0 +1,90 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+
+  <title>20 Wise Men</title>
+  <meta name="description" content="The HTML5 Herald">
+  <meta name="author" content="SitePoint">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <link rel="stylesheet" href="assets/css/main.css">
+  <script src="assets/js/angular.min.js"></script>
+  <script src="assets/js/jquery.min.js"></script>
+  <script src="assets/js/bootstrap.min.js"></script>
+  <script src="assets/js/ui-bootstrap.min.js"></script>
+  <script src="assets/js/main.js"></script>
+
+</head>
+
+<body ng-app="20wise" ng-controller='MainCtrl as mainCtrl'>
+  <script src="assets/js/ui-bootstrap-tpls.min.js"></script>
+  <script type="text/ng-template" id="selectModal.html">
+      <div class="modal-header">
+        <h3 class="modal-title">Jugador {{modalCtrl.playerIndex}}</h3>
+      </div>
+      <div class="modal-body">
+          <label>Name</label>
+          <input type="text" ng-model="modalCtrl.playerName" class="form-control" placeholder="Nicobito">
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-danger" type="button" ng-click="modalCtrl.nope()">NOPE</button>
+        <button class="btn btn-primary" type="button" ng-click="modalCtrl.sure()">SURE</button>
+      </div>
+  </script>
+  <script type="text/ng-template" id="winnerModal.html">
+      <div class="modal-header">
+        <h3 class="modal-title">These players won:</h3>
+      </div>
+      <div class="modal-body">
+          <h3 ng-repeat="name in winnerModalCtrl.players">{{name}}</h3>
+      </div>
+  </script>
+
+  <div class="container">
+    <nav class="navbar navbar-default">
+      <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">
+              <img width=20 height=20 alt="TOPKEK" src="assets/img/icon.png">
+              20 Wise
+          </a>
+        </div>
+    
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+          <button ng-if="mainCtrl.isIdle()" ng-click="mainCtrl.randomChars()" type="button" class="btn btn-primary navbar-btn navbar-right">RANDOM SELECT</button>
+          <button ng-if="mainCtrl.isSelect()" ng-disabled="!mainCtrl.canStartPlaying()" ng-click="mainCtrl.beginGame()" type="button" class="btn btn-primary navbar-btn navbar-right">START PLAYING</button>
+          <button ng-if="mainCtrl.isSelect()" ng-click="mainCtrl.reroll()" type="button" class="btn btn-warning navbar-btn navbar-right">REROLL</button>
+          <button ng-if="mainCtrl.isPlaying()" ng-click="mainCtrl.resetGame()" type="button" class="btn btn-danger navbar-btn navbar-right">STOP PLAYING</button>
+          <button ng-if="mainCtrl.isWon()" ng-click="mainCtrl.resetGame()" type="button" class="btn btn-success navbar-btn navbar-right">PLAY AGAIN</button>
+        </div><!-- /.navbar-collapse -->
+      </div><!-- /.container-fluid -->
+    </nav>
+    <div class="row players-row">
+      <div ng-repeat="p in mainCtrl.players" class="col-md-1 clearfix">
+          <div class="playercard player{{$index}}">
+              <h3>{{p.name}}</h3>
+          </div>
+      </div>
+    </div>
+    <div class="row row-pjs">
+      <div class="col-md-12">
+        <img 
+          class="character-img"
+          ng-click="mainCtrl.clickPJ($index)"
+          ng-class="{winner: c.winner, active: c.active, dead: c.dead}"
+          ng-repeat="c in mainCtrl.characters"
+          ng-src="assets/img/{{c.img}}"/>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
