@@ -21,7 +21,7 @@
   <script src="assets/js/ui-bootstrap-tpls.min.js"></script>
   <script type="text/ng-template" id="selectModal.html">
       <div class="modal-header">
-        <h3 class="modal-title">Jugador {{modalCtrl.playerIndex}}</h3>
+        <h3 class="modal-title">Player {{modalCtrl.playerIndex}}</h3>
       </div>
       <div class="modal-body">
           <label>Name</label>
@@ -38,6 +38,18 @@
       </div>
       <div class="modal-body">
           <h3 ng-repeat="name in winnerModalCtrl.players">{{name}}</h3>
+      </div>
+  </script>
+  <script type="text/ng-template" id="confirmModal.html">
+      <div class="modal-header">
+        <h3 class="modal-title">Confirm</h3>
+      </div>
+      <div class="modal-body">
+          <img class="character-img active" ng-src="assets/img/{{confirmModalCtrl.selectedChar.img}}"/>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-danger" type="button" ng-click="confirmModalCtrl.nope()">NOPE</button>
+        <button class="btn btn-primary" type="button" ng-click="confirmModalCtrl.sure()">SURE</button>
       </div>
   </script>
 
@@ -60,9 +72,14 @@
     
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-          <button ng-if="mainCtrl.isIdle()" ng-click="mainCtrl.randomChars()" type="button" class="btn btn-primary navbar-btn navbar-right">RANDOM SELECT</button>
+          <button ng-if="mainCtrl.isIdle()" ng-disabled="!mainCtrl.canAddPlayers()" ng-click="mainCtrl.beginAddPlayers()" type="button" class="btn btn-primary navbar-btn navbar-right">ADD PLAYERS</button>
+          <button ng-if="mainCtrl.isIdle()" ng-click="mainCtrl.reroll()" type="button" class="btn btn-warning navbar-btn navbar-right">RANDOM SELECT</button>
+          <button ng-if="mainCtrl.isIdle()" ng-disabled="!mainCtrl.canIncRandomRoll()" ng-click="mainCtrl.incRandomRoll()" type="button" class="btn btn-primary navbar-btn navbar-right">+</button>
+          <button ng-if="mainCtrl.isIdle()" ng-disabled="!mainCtrl.canDecRandomRoll()" ng-click="mainCtrl.decRandomRoll()" type="button" class="btn btn-primary navbar-btn navbar-right">-</button>
+          <p class="navbar-text navbar-right navbar-random-count"> {{mainCtrl.randomRollCount}} </p>
           <button ng-if="mainCtrl.isSelect()" ng-disabled="!mainCtrl.canStartPlaying()" ng-click="mainCtrl.beginGame()" type="button" class="btn btn-primary navbar-btn navbar-right">START PLAYING</button>
-          <button ng-if="mainCtrl.isSelect()" ng-click="mainCtrl.reroll()" type="button" class="btn btn-warning navbar-btn navbar-right">REROLL</button>
+
+          
           <button ng-if="mainCtrl.isPlaying()" ng-click="mainCtrl.resetGame()" type="button" class="btn btn-danger navbar-btn navbar-right">STOP PLAYING</button>
           <button ng-if="mainCtrl.isWon()" ng-click="mainCtrl.resetGame()" type="button" class="btn btn-success navbar-btn navbar-right">PLAY AGAIN</button>
         </div><!-- /.navbar-collapse -->

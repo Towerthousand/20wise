@@ -8,6 +8,7 @@ var GAMESTATE = {
 var MainCtrl = function(characters, $http, $scope, $uibModal) {
     this.characters = characters.array;
     this.modalService = $uibModal;
+    this.randomRollCount = 20;
     this.resetGame();
 };
 
@@ -18,27 +19,28 @@ MainCtrl.prototype.resetGame = function() {
         this.characters[i].dead = false;
         this.characters[i].winner = false;
     }
+    this.activeChars = 0;
     this.state = GAMESTATE.IDLE;
 };
 
 MainCtrl.prototype.randomChars = function() {
-    if(this.characters.length < 20) return;
+    if(this.characters.length < this.randomRollCount) return;
     if(!this.ensureState(GAMESTATE.IDLE)) return;
-    for(var i = 0; i < 20; ++i) {
+    for(var i = 0; i < this.randomRollCount; ++i) {
         var chosen = Math.floor(Math.random()*this.characters.length);
         if(this.characters[chosen].active) {
             i--;
             continue;
         }
+        this.activeChars++;
         this.characters[chosen].active = true;
     }
-    this.state = GAMESTATE.SELECT;
 };
 
 MainCtrl.prototype.reroll = function() {
     this.resetGame();
     this.randomChars();
-}
+};
 
 MainCtrl.prototype.ensureState = function(state) {
     if(this.state != state) {
@@ -64,8 +66,32 @@ MainCtrl.prototype.isWon = function() {
     return this.state == GAMESTATE.WON;
 };
 
+MainCtrl.prototype.incRandomRoll = function() {
+    this.randomRollCount++;
+};
+
+MainCtrl.prototype.decRandomRoll = function() {
+    this.randomRollCount--;
+};
+
+MainCtrl.prototype.canIncRandomRoll = function() {
+    return this.randomRollCount < this.characters.length;
+};
+
+MainCtrl.prototype.canDecRandomRoll = function() {
+    return this.randomRollCount > 1;
+};
+
 MainCtrl.prototype.canStartPlaying = function() {
     return (this.players.length > 1 && this.state == GAMESTATE.SELECT);
+};
+
+MainCtrl.prototype.canAddPlayers = function() {
+	return (this.activeChars > 2 && this.state == GAMESTATE.IDLE);
+};
+
+MainCtrl.prototype.beginAddPlayers = function() {
+   this.state = GAMESTATE.SELECT;
 };
 
 MainCtrl.prototype.beginGame = function() {
@@ -75,6 +101,16 @@ MainCtrl.prototype.beginGame = function() {
 
 MainCtrl.prototype.clickPJ = function(i) {
     var self = this;
+    if(this.state == GAMESTATE.IDLE) {
+        if(this.characters[i].active) {
+            this.activeChars--;
+            this.characters[i].active = false;
+        }
+        else {
+            this.activeChars++;
+            this.characters[i].active = true;
+        }
+    }
     if(this.state == GAMESTATE.SELECT && this.characters[i].active && this.players.length < 8) {
         var modalHandle = this.modalService.open({
             animation: true,
@@ -92,10 +128,24 @@ MainCtrl.prototype.clickPJ = function(i) {
         });
         modalHandle.result.then(function(name) {
             self.addPlayer(i, name);
-        })
+        });
     }
     if(this.state == GAMESTATE.PLAYING) {
-        this.killPJ(i);
+	      var confirmModalHandle = this.modalService.open({
+            animation: true,
+            templateUrl: 'confirmModal.html',
+            controller: 'ConfirmModalCtrl as confirmModalCtrl',
+            size: 'sm',
+            resolve: {
+                selectedChar: function() {
+                    return self.characters[i];
+                }
+            }
+        });
+        
+        confirmModalHandle.result.then(function() {
+            self.killPJ(i);
+        });
     }
 };
 
@@ -108,7 +158,7 @@ MainCtrl.prototype.killPJ = function(i) {
     this.checkFinish();
 };
 
-MainCtrl.prototype.checkFinish = function(i) {
+MainCtrl.prototype.checkFinish = function() {
     var winners = [];
     for(var i = 0; i < this.players.length; ++i) {
         if(!this.characters[this.players[i].pj].dead) {
@@ -118,7 +168,7 @@ MainCtrl.prototype.checkFinish = function(i) {
     var survivors = 0;
     var winnerpj = -1;
     for(var i = 0; i < winners.length; ++i) {
-        if(winners[i] == true) {
+        if(winners[i] === true) {
             ++survivors;
             winnerpj = i;
         }
@@ -126,9 +176,9 @@ MainCtrl.prototype.checkFinish = function(i) {
     if(survivors>1) {
         return;
     }
-    if(survivors != 0) {
+    if(survivors !== 0) {
         this.characters[winnerpj].winner = true;
-        winnersp = [];
+        var winnersp = [];
         for(var i = 0; i < this.players.length; ++i) {
             if(this.players[i].pj == winnerpj) {
                 winnersp[winnersp.length] = this.players[i].name;
@@ -165,12 +215,26 @@ var SelectModalCtrl = function(playerIndex, selectedPJ, $uibModalInstance) {
 };
 
 SelectModalCtrl.prototype.sure = function() {
-    if(this.playerName == '') return;
+    if(this.playerName === '') return;
     this.$uibModalInstance.close(this.playerName);
 };
 
 SelectModalCtrl.prototype.nope = function() {
     this.$uibModalInstance.dismiss('S\'ha cagat');
+};
+
+var ConfirmModalCtrl = function(selectedChar, $uibModalInstance) {
+    this.selectedChar = selectedChar;
+    console.log(selectedChar);
+    this.$uibModalInstance = $uibModalInstance;
+};
+
+ConfirmModalCtrl.prototype.sure = function() {
+    this.$uibModalInstance.close();
+};
+
+ConfirmModalCtrl.prototype.nope = function() {
+    this.$uibModalInstance.dismiss();
 };
 
 var WinnerModalCtrl = function(winners) {
@@ -180,4 +244,5 @@ var WinnerModalCtrl = function(winners) {
 angular.module('20wise')
 .controller('MainCtrl', ['characters', '$http', '$scope', '$uibModal', MainCtrl])
 .controller('SelectModalCtrl', ['playerIndex', 'selectedPJ', '$uibModalInstance', SelectModalCtrl])
+.controller('ConfirmModalCtrl', ['selectedChar', '$uibModalInstance', ConfirmModalCtrl])
 .controller('WinnerModalCtrl', ['winners', WinnerModalCtrl]);
