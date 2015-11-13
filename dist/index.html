@@ -76,10 +76,8 @@
           <button ng-if="mainCtrl.isIdle()" ng-click="mainCtrl.reroll()" type="button" class="btn btn-warning navbar-btn navbar-right">RANDOM SELECT</button>
           <button ng-if="mainCtrl.isIdle()" ng-disabled="!mainCtrl.canIncRandomRoll()" ng-click="mainCtrl.incRandomRoll()" type="button" class="btn btn-primary navbar-btn navbar-right">+</button>
           <button ng-if="mainCtrl.isIdle()" ng-disabled="!mainCtrl.canDecRandomRoll()" ng-click="mainCtrl.decRandomRoll()" type="button" class="btn btn-primary navbar-btn navbar-right">-</button>
-          <p class="navbar-text navbar-right navbar-random-count"> {{mainCtrl.randomRollCount}} </p>
+          <p ng-if="mainCtrl.isIdle()" class="navbar-text navbar-right navbar-random-count"> {{mainCtrl.randomRollCount}} </p>
           <button ng-if="mainCtrl.isSelect()" ng-disabled="!mainCtrl.canStartPlaying()" ng-click="mainCtrl.beginGame()" type="button" class="btn btn-primary navbar-btn navbar-right">START PLAYING</button>
-
-          
           <button ng-if="mainCtrl.isPlaying()" ng-click="mainCtrl.resetGame()" type="button" class="btn btn-danger navbar-btn navbar-right">STOP PLAYING</button>
           <button ng-if="mainCtrl.isWon()" ng-click="mainCtrl.resetGame()" type="button" class="btn btn-success navbar-btn navbar-right">PLAY AGAIN</button>
         </div><!-- /.navbar-collapse -->
