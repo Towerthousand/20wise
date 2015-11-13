@@ -197,7 +197,7 @@ MainCtrl.prototype.clickPJ = function(i) {
             self.addPlayer(i, name);
         });
     }
-    if(this.state == GAMESTATE.PLAYING) {
+    if(this.state == GAMESTATE.PLAYING && this.characters[i].active) {
 	      var confirmModalHandle = this.modalService.open({
             animation: true,
             templateUrl: 'confirmModal.html',
