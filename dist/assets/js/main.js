@@ -2,13 +2,13 @@ angular.module('20wise', ['ui.bootstrap']);
 
 var CharacterService = function() {
     this.array = [
-	//{img:'bayonetta.png', name:'Bayonetta'},
+	{img:'bayonetta.png', name:'Bayonetta'},
         {img:'bowser-jr.png', name:'Bowser Jr.'},
         {img:'bowser.png', name:'Bowser'},
         {img:'captain-falcon.png', name:'Captain Falcon'},
         {img:'charizard.png', name:'Charizard'},
 	{img:'cloud.png', name:'Cloud'},
-	//{img:'corrin.png', name:'Corrin'},
+	{img:'corrin.png', name:'Corrin'},
         {img:'dark-pit.png', name:'Dark Pit'},
         {img:'dedede.png', name:'King Dedede'},
         {img:'diddy.png', name:'Diddy Kong'},
