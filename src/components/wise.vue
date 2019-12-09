@@ -172,6 +172,7 @@ export default {
           return
       }
       this.gameState.players.push({name: this.newPlayerName, fighter: fighterName});
+      this.newPlayerName = '';
       if(this.numPlayers === this.gameState.players.length) {
           this.gamePhase = 'playing';
           this.checkWinCondition();
