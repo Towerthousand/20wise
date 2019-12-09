@@ -1,7 +1,8 @@
 <template>
   <div>
     <modal v-if="showError" @close="showError = false">
-      <h3 slot="header">custom header</h3>
+      <h3 slot="header">Error</h3>
+      <p slot="body">{{errorText}}</p>
     </modal>
     <div class="settings-screen" v-if="gamePhase === 'welcome'">
         <img class="title" src="../assets/title.png">
@@ -36,6 +37,9 @@
     <div class="choosing-screen" v-if="gamePhase === 'choosing'">
         <div class="block">
           <p class="welcome">Pick your name and your fighter!</p>
+          <div class="player-summary">
+              <p v-for="player in gameState.players" v-bind:key="player.name">Player {{player.name}} is ready!</p>
+          </div>
           <div class="input">
               <p>Player Name</p>
               <input v-model="newPlayerName"/>
@@ -101,7 +105,11 @@ export default {
       };
     },
   methods: {
-    killFighter: function(fighterName) {
+    bringUpModal(modalText) {
+        this.errorText = modalText;
+        this.showError = true;
+    },
+    killFighter(fighterName) {
         this.gameState.fighters.forEach(f => f.alive = f.name === fighterName? false : f.alive);
         this.$forceUpdate();
         this.checkWinCondition();
@@ -132,6 +140,7 @@ export default {
     },
     settingsDone() {
         if(this.areSettingsInvalid()) {
+            this.bringUpModal("Invalid settings. Number of players must be > 1, number of fighters too if chosen at random");
             return
         }
         if(this.randomSelection) {
@@ -146,6 +155,7 @@ export default {
     },
     startGame() {
       if(this.isPickingInvalid()) {
+          this.bringUpModal("Not enough fighters picked");
           return
       }
       this.gameState.fighters = this.picked_fighters.filter(f => f.picked === true);
@@ -158,7 +168,7 @@ export default {
     },
     addPlayer(fighterName) {
       if (this.newPlayerName.length === 0 || this.gameState.players.find(player => player.name === this.newPlayerName)) {
-          this.showError = true;
+          this.bringUpModal("Can't add a player without name or a player that already exists")
           return
       }
       this.gameState.players.push({name: this.newPlayerName, fighter: fighterName});
@@ -168,7 +178,7 @@ export default {
       }
     },
     areSettingsInvalid() {
-        return !(this.numPlayers > 1 && this.numFighters > 1 && this.numFighters <= this.all_fighters.length);
+        return !(this.numPlayers > 1 && (!this.randomSelection || this.numFighters > 1 && this.numFighters <= this.all_fighters.length));
     },
     isPickingInvalid() {
         let totalPicked = this.picked_fighters.filter(f => f.picked === true).length;
@@ -187,7 +197,7 @@ export default {
     * {
         font-family: sans-serif;
     }
-    div.roster-screen, div.picking-screen, div.settings-screen, div.results-screen {
+    div.roster-screen, div.picking-screen, div.choosing-screen, div.settings-screen, div.results-screen {
         text-align: center;
     }
     div.roster-screen, div.picking-screen {

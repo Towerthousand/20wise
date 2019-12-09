@@ -18,7 +18,6 @@
 
           <div class="modal-footer">
             <slot name="footer">
-              default footer
               <button class="modal-default-button" @click="$emit('close')">
                 OK
               </button>
@@ -74,13 +73,22 @@
     margin: 20px 0;
   }
 
-  .modal-default-button {
-    float: right;
-  }
-
   .modal-enter .modal-container,
   .modal-leave-active .modal-container {
     -webkit-transform: scale(1.1);
     transform: scale(1.1);
+  }
+  .modal-footer {
+      text-align: center;
+  }
+  .modal-footer button {
+    background-color: lightskyblue;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    margin: 20px;
+  }
+  .modal-footer button:disabled {
+    background-color: lightgray;
   }
 </style>
