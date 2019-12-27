@@ -4,6 +4,18 @@
       <h3 slot="header">Error</h3>
       <p slot="body">{{errorText}}</p>
     </modal>
+    <modal v-if="showConfirmation">
+        <h3 slot="header">Confirmation</h3>
+        <p slot="body">You're sure you want to eliminate {{eliminatingFighter}}?</p>
+        <div slot="footer">
+          <button class="modal-default-button" @click="confirmElimination">
+              Confirm
+          </button>
+          <button class="modal-default-button" @click="showConfirmation = false">
+              Cancel
+          </button>
+        </div>
+    </modal>
     <div class="settings-screen" v-if="gamePhase === 'welcome'">
         <img class="title" src="../assets/title.png">
         <p class="welcome">Welcome to 20wise!</p>
@@ -62,7 +74,7 @@
            v-for="fighter in gameState.fighters"
            v-bind:key="fighter.name"
            v-bind:style="{opacity: fighter.alive ? 1 : 0.25}"
-           @click="killFighter(fighter.name)">
+           @click="promptEliminationConfirmation(fighter.name)">
         <img :src="getFighterImgUrl(fighter.src)"/>
       </div>
     </div>
@@ -97,7 +109,9 @@ export default {
         numFighters: 2,
         randomSelection: false,
         newPlayerName: '',
+        showConfirmation: false,
         showError: false,
+        eliminatingFighter: null,
         gameState: {
           fighters: [],
           players: [],
@@ -123,6 +137,14 @@ export default {
           this.gamePhase = 'results';
       }
       return false;
+    },
+    promptEliminationConfirmation(fighterName) {
+        this.showConfirmation = true;
+        this.eliminatingFighter = fighterName;
+    },
+    confirmElimination() {
+        this.killFighter(this.eliminatingFighter);
+        this.showConfirmation = false;
     },
     getRandomSubarray(arr, size) {
       let arr2 = JSON.parse(JSON.stringify(arr));
